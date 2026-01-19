@@ -112,17 +112,17 @@ This service matches online captains to nearby NEW orders within a radius (defau
 Supports concurrency-safe order assignment.
 
 ## 🔥 Swagger API Docs
-![Swagger Screenshot](Docs/Images/swagger/swagger.png)
+![Swagger Screenshot](Docs/Images)
 
 ## 🗄️ Database Schema (ERD)
-![DB Schema](Docs/Images/db/erd.png)
+![DB Schema](Docs/Images/db)
 
 ## ✅ Sample API Responses
 ### Nearby Orders
-![Nearby Orders](Docs/Images/api-response/nearby-orders.png)
+![Nearby Orders](Docs/Images/api-response)
 
 ### Accept Order (Concurrency Safe)
-![Accept Order](Docs/Images/api-response/order-accept.png)
+![Accept Order](Docs/Images/api-response)
 
 
 ## 🗄️ Database Design (Minimum)

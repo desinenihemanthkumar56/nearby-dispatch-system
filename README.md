@@ -105,6 +105,26 @@ This is a core dispatch requirement in real delivery apps.
 
 ---
 
+# Nearby Dispatch System (Captain Matching)
+
+## 📌 System Overview
+This service matches online captains to nearby NEW orders within a radius (default 1.5km).
+Supports concurrency-safe order assignment.
+
+## 🔥 Swagger API Docs
+![Swagger Screenshot](Docs/Images/swagger/swagger.png)
+
+## 🗄️ Database Schema (ERD)
+![DB Schema](Docs/Images/db/erd.png)
+
+## ✅ Sample API Responses
+### Nearby Orders
+![Nearby Orders](Docs/Images/api-response/nearby-orders.png)
+
+### Accept Order (Concurrency Safe)
+![Accept Order](Docs/Images/api-response/order-accept.png)
+
+
 ## 🗄️ Database Design (Minimum)
 
 ### Captain

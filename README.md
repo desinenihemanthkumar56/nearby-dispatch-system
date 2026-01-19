@@ -119,10 +119,10 @@ Supports concurrency-safe order assignment.
 
 ## ✅ Sample API Responses
 ### Nearby Orders
-![Nearby Orders](Docs/Images/api-response)
+![Nearby Orders](Docs/Images)
 
 ### Accept Order (Concurrency Safe)
-![Accept Order](Docs/Images/api-response)
+![Accept Order](Docs/Images)
 
 
 ## 🗄️ Database Design (Minimum)

@@ -2,7 +2,9 @@
 
 **Nearby Order Discovery & Captain Matching (Swiggy/Zomato/Rapido style)**
 Spring Boot backend that reduces **long pickup distance**, improves **order acceptance rate**, and helps delivery partners earn more by saving fuel + time.
+
 ---
+
 ## 📌 Problem Statement (Real World)
 
 Delivery partners (captains) face a major problem in hyperlocal delivery platforms:
@@ -36,8 +38,6 @@ This project builds a **Nearby Order Discovery & Allocation System** that:
 
 ## 🎯 Expected Impact (Business + Captain Benefits)
 
-This system is designed to improve key KPIs for platforms and captains:
-
 ### ✅ Platform KPIs (Company Impact)
 
 * 📈 **Order Acceptance Rate**: +15% to +30%
@@ -52,7 +52,7 @@ This system is designed to improve key KPIs for platforms and captains:
 * 💰 Higher income because **more orders get accepted** and completed
 
 > Example: If a captain completes 18 orders/day and acceptance improves by 20%,
-> they can potentially complete **2–4 extra orders/day** depending on city demand and availability.
+> they can potentially complete **2–4 extra orders/day** depending on demand.
 
 ---
 
@@ -66,219 +66,89 @@ This system is designed to improve key KPIs for platforms and captains:
 * Captain can **Accept** an order (only one captain can win)
 * Captain can **Reject** an order (cooldown prevents re-showing)
 
-### ✅ Order Features
-
-* Create order with pickup location
-* Order lifecycle:
-  `NEW → ASSIGNED → PICKED → DELIVERED / CANCELLED`
-
-### ✅ Admin Features
-
-* View orders by status (NEW / ASSIGNED)
-* View order details
-* View assignment logs:
-  `SENT / ACCEPTED / REJECTED / TIMEOUT`
-
 ---
 
 ## 🔐 Concurrency Safety (Industry Level)
 
-This system prevents duplicate assignment using **atomic DB update**:
+If 2 captains accept the same order at the same time:
 
-✅ If 2 captains accept the same order at the same time:
-
-* Only 1 succeeds
-* Other gets `409 CONFLICT` → `ORDER_ALREADY_ASSIGNED`
-
-This is a core dispatch requirement in real delivery apps.
+* ✅ Only **1 succeeds**
+* ❌ Other gets `409 CONFLICT (ORDER_ALREADY_ASSIGNED)`
 
 ---
 
 ## 🛠️ Tech Stack
 
-* Java 17
-* Spring Boot
-* Spring Security (basic config for dev)
+* Java 17, Spring Boot
 * Spring Data JPA (Hibernate)
 * MySQL
-* Swagger OpenAPI (API Documentation)
+* Swagger OpenAPI
+* Docker + Docker Compose
 
 ---
 
-# Nearby Dispatch System (Captain Matching)
+## 📸 Proof (Docs / Screenshots)
 
-## 📌 System Overview
-This service matches online captains to nearby NEW orders within a radius (default 1.5km).
-Supports concurrency-safe order assignment.
+✅ All proof screenshots are saved here:
+📂 **[Docs/Images](Docs/Images)**
 
-## 🔥 Swagger API Docs
-![Swagger Screenshot](Docs/Images)
+(Contains Swagger UI, ERD schema, and API response screenshots)
 
-## 🗄️ Database Schema (ERD)
-![DB Schema](Docs/Images/db)
+---
 
-## ✅ Sample API Responses
-### Nearby Orders
-![Nearby Orders](Docs/Images)
+## 📑 Swagger API Documentation
 
-### Accept Order (Concurrency Safe)
-![Accept Order](Docs/Images)
+After running the project:
 
+✅ Swagger UI
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-## 🗄️ Database Design (Minimum)
+✅ OpenAPI JSON
+[http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+---
+
+## 🔌 Key APIs (Quick View)
 
 ### Captain
 
-* id, name, status (ONLINE/OFFLINE)
-* lat, lng
-* lastUpdatedAt
-* activeOrdersCount
+* `POST /api/captains` (create captain)
+* `GET /api/captains/{id}`
+* `POST /api/captains/{id}/status`
+* `POST /api/captains/{id}/location`
+* `GET /api/captains/{id}/nearby-orders?radiusKm=1.0&limit=20`
 
 ### Orders
 
-* id, orderNo
-* pickupLat, pickupLng
-* status (NEW/ASSIGNED/...)
-* assignedCaptainId
-* createdAt
+* `POST /api/orders` (create order)
+* `POST /api/orders/{orderId}/accept` ✅ concurrency safe
+* `POST /api/orders/{orderId}/reject` ✅ cooldown
 
-### Assignment Logs
+### Admin
 
-* orderId, captainId
-* distanceKm
-* action (SENT/ACCEPTED/REJECTED/TIMEOUT)
-* createdAt
-
-### Order Rejections
-
-* orderId, captainId
-* rejectedAt, expiresAt (cooldown)
+* `GET /api/admin/orders?status=NEW`
+* `GET /api/admin/orders/{orderId}`
+* `GET /api/admin/assignment-logs?orderId={orderId}`
 
 ---
 
-## 📑 API Documentation (Swagger)
+## ▶️ Run Locally (Java + MySQL)
 
-Once the project is running, open:
-
-✅ Swagger UI
-`http://localhost:8080/swagger-ui/index.html`
-
-✅ OpenAPI JSON
-`http://localhost:8080/v3/api-docs`
-
----
-
-## 🔌 API Endpoints
-
-### ✅ Captain APIs
-
-**Create Captain**
-`POST /api/captains`
-
-```json
-{
-  "name": "Charan",
-  "status": "ONLINE",
-  "lat": 13.6288,
-  "lng": 79.4192
-}
-```
-
-**Get Captain By ID**
-`GET /api/captains/{captainId}`
-
-**Update Captain Status**
-`POST /api/captains/{captainId}/status`
-
-```json
-{
-  "status": "ONLINE"
-}
-```
-
-**Update Captain Location**
-`POST /api/captains/{captainId}/location`
-
-```json
-{
-  "lat": 13.6288,
-  "lng": 79.4192
-}
-```
-
-**Get Nearby Orders**
-`GET /api/captains/{captainId}/nearby-orders?radiusKm=1.0&limit=20`
-
----
-
-### ✅ Order APIs
-
-**Create Order**
-`POST /api/orders`
-
-```json
-{
-  "orderNo": "ORD101",
-  "pickupLat": 13.6292,
-  "pickupLng": 79.4201
-}
-```
-
-**Accept Order** (Concurrency-safe)
-`POST /api/orders/{orderId}/accept`
-
-```json
-{
-  "captainId": 3
-}
-```
-
-**Reject Order** (Cooldown)
-`POST /api/orders/{orderId}/reject`
-
-```json
-{
-  "captainId": 3
-}
-```
-
----
-
-### ✅ Admin APIs
-
-**List Orders by Status**
-`GET /api/admin/orders?status=NEW`
-`GET /api/admin/orders?status=ASSIGNED`
-
-**Get Order Details**
-`GET /api/admin/orders/{orderId}`
-
-**Assignment Logs (Tracking)**
-`GET /api/admin/assignment-logs?orderId={orderId}`
-
----
-
-## ▶️ How to Run Locally
-
-### ✅ Prerequisites
+### Prerequisites
 
 * Java 17
 * MySQL running locally
 
-### ✅ Configure DB
-
-Update your `application.properties`:
+### application.properties
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/nearby_dispatch
 spring.datasource.username=root
 spring.datasource.password=YOUR_PASSWORD
-
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
 ```
 
-### ✅ Run Application
+### Start
 
 ```bash
 mvn clean install
@@ -287,19 +157,52 @@ mvn spring-boot:run
 
 ---
 
-## ✅ Testing Flow (Recommended)
+## 🐳 Run with Docker (Recommended)
+
+### Start (App + MySQL)
+
+```bash
+docker compose up -d --build
+```
+
+### Check running containers
+
+```bash
+docker ps
+```
+
+### View app logs
+
+```bash
+docker logs -f nearby_dispatch_app
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+App URL: [http://localhost:8080](http://localhost:8080)
+Swagger: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+MySQL (host): localhost:3307
+
+---
+
+## ✅ Quick Test Flow
 
 1. Create Captain
 2. Update Captain Location
 3. Create Order
-4. Get Nearby Orders
-5. Accept Order
-6. Check Admin Assigned Orders
-7. Verify Logs
+4. Fetch Nearby Orders
+5. Accept Order (verify only 1 captain wins)
+6. Check Admin logs
 
 ---
+
 ## 👤 Author
 
-Hemanth Kumar Desineni
+**Hemanth Kumar Desineni**
 Backend Developer | Java + Spring Boot | System Design Projects
+
 

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: configMap
+metadata:
+  name: app-config
+  namespace: nearby-dispatch
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
